@@ -1,6 +1,7 @@
 # Import the necessary libraries
 import os
 import matplotlib.pyplot as plt
+import json
 # Define directory path for each of the simulated environment log files 
 h = '/Users/minakabki/Desktop/Dissertation-work'
 h1 = '/Users/minakabki/Desktop/Dissertation-work/Het1Logfile/REvoSim_output'
@@ -54,7 +55,7 @@ for eachDir in parentDirectory:
 
                         if line.startswith("[I]"):
                             eachIteratioNumber = line.split(' ')[1]
-                            if int(eachIteratioNumber) >= int('8049') and int(eachIteratioNumber) <= int('10049'):
+                            if int(eachIteratioNumber) >= int('8049') and int(eachIteratioNumber) < int('10049'):
                                 shouldGetNumberOfSpecies = True
                             else:
                                 shouldGetNumberOfSpecies = False
@@ -74,7 +75,6 @@ for eachDir in parentDirectory:
                                 except Exception as e:
                                     print('error', e)
                                     print('line',line.split(' '))
-                # finalResult[eachDir].append(sum(result[eachDir][myfile]) / len(result[eachDir][myfile]))
     print('Working on: ', eachDir)
 
 
@@ -82,8 +82,11 @@ for eachResult in result:
     currentResult = result[eachResult]
     for eachFile in currentResult:
         numberOfSpeciesList = currentResult[eachFile]
-        print(numberOfSpeciesList)
+        finalResult[eachResult].append((0.75) * (sum(numberOfSpeciesList) / len(numberOfSpeciesList)))
 
+with open('./finalResult.json', 'w') as f:
+    # write the object to the file as a JSON string using json.dump()
+    json.dump(finalResult, f)
 
 print(finalResult['Heterogeneous'])
 
