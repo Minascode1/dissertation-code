@@ -30,7 +30,7 @@ with open('./result.json', 'r') as f:
     recovery_times = json.load(f)
 
 # print the object to verify that it was loaded correctly
-print(recovery_times)
+# print(recovery_times)
 
 finalResult = {
     'Heterogeneous': [],
@@ -45,6 +45,7 @@ for eachDir in parentDirectory:
         childDir = os.fsencode(child)
 
         for file in os.listdir(childDir):
+            iterations = 0
             myfile = file.decode('utf-8')
             # To get the correct logfile (not the end run log files): If the file doesnt contain 'end' in its name and ends with '.txt'
             # it is read and the number of living digital organisms is extracted 
@@ -59,37 +60,47 @@ for eachDir in parentDirectory:
 
                         if line.startswith("[I]"):
                             eachIteratioNumber = line.split(' ')[1]
-                            if int(eachIteratioNumber) >= int('8049') and int(eachIteratioNumber) < int('10049'):
+                            if int(eachIteratioNumber) >= int('10049'):
                                 shouldGetNumberOfSpecies = True
                             else:
                                 shouldGetNumberOfSpecies = False
                         elif line.startswith("[P]"):
                             # If the flag is True, the number of living digital organisms is extracted and stored in the result dictionary
                             if shouldGetNumberOfSpecies == True:
-                                try:
-                                    eachPopulationGridData = line.split(' ')[1]
-                                    NumberOfSpecies = eachPopulationGridData.split(',')[4]
-                                    
+                                eachPopulationGridData = line.split(' ')[1]
+                                NumberOfSpecies = int(eachPopulationGridData.split(',')[4])
+                                # print('recovery time: ', recovery_times[eachDir][myfile])
+                                # print('my file: ', myfile)
+                                if NumberOfSpecies < int(recovery_times[eachDir][myfile]):
+                                    iterations += 1
+                                else:
+                                    # if iterations != 0:
+                                    finalResult[eachDir].append(iterations * 50)
+                                    break
+                continue                
                                    
-                                except Exception as e:
-                                    print('error', e)
-                                    print('line',line.split(' '))
     print('Working on: ', eachDir)
 
 
-# # Create a list of data and labels for the bar chart
-# data = list((iterationsListForHet, iterationsListForNonHet))
-# labels = ['Heterogeneous', 'Non-Heterogeneous']
+# with open('./iterations2.json', 'w') as f:
+#     # write the object to the file as a JSON string using json.dump()
+#     json.dump(finalResult, f)
 
-# # Plot bar chart with combined data
-# # Create a figure and axis object
-# fig, ax = plt.subplots()
+# Create a list of data and labels for the bar chart
+data = list((finalResult['Heterogeneous'], finalResult['Non-Heterogeneous']))
+labels = ['Heterogeneous', 'Non-Heterogeneous']
 
-# # Create the box plot
-# ax.boxplot([iterationsListForHet, iterationsListForNonHet], labels=['Heterogeneous', 'Non-Heterogeneous'])
+# Plot bar chart with combined data
+# Create a figure and axis object
+fig, ax = plt.subplots()
 
-# # Set the y-axis label
-# ax.set_ylabel('Species Recovery Rate')
+# Create the box plot
+bp = ax.boxplot(data)
 
-# # Show the plot
-# plt.show()
+# Set the y-axis label
+ax.set_xticklabels(['Heterogeneous', 'Non-Heterogeneous'])
+ax.set_ylabel('Species Recovery Time')
+ax.set_title('Species Recovery Time: Heterogeneous vs Non-Heterogeneous')
+
+# Show the plot
+plt.show()
