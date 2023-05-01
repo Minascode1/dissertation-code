@@ -22,11 +22,15 @@ parentDirectory = {
     'Heterogeneous': [h1, h2, h3, h4, h5],
     'Non-Heterogeneous': [nh1, nh2, nh3, nh4, nh5],
 }
+
+recovery_times = {}
 # Define a dictionary to hold the results 
-result = {
-    'Heterogeneous': {},
-    'Non-Heterogeneous': {},
-}
+with open('./result.json', 'r') as f:
+    # load the object from the file using json.load()
+    recovery_times = json.load(f)
+
+# print the object to verify that it was loaded correctly
+print(recovery_times)
 
 finalResult = {
     'Heterogeneous': [],
@@ -66,26 +70,11 @@ for eachDir in parentDirectory:
                                     eachPopulationGridData = line.split(' ')[1]
                                     NumberOfSpecies = eachPopulationGridData.split(',')[4]
                                     
-                                    if myfile in result[eachDir]:
-                                        result[eachDir][myfile].append(int(NumberOfSpecies))
-                                    else:
-                                        result[eachDir][myfile] = []
-                                        result[eachDir][myfile].append(int(NumberOfSpecies))
                                    
                                 except Exception as e:
                                     print('error', e)
                                     print('line',line.split(' '))
     print('Working on: ', eachDir)
-
-
-for eachResult in result:
-    currentResult = result[eachResult]
-    for eachFile in currentResult:
-        currentResult[eachFile] = (0.75) * (sum(currentResult[eachFile]) / len(currentResult[eachFile]))
-
-with open('./result.json', 'w') as f:
-    # write the object to the file as a JSON string using json.dump()
-    json.dump(result, f)
 
 
 # # Create a list of data and labels for the bar chart
