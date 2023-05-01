@@ -99,7 +99,8 @@ bp = ax.boxplot(data)
 
 # Set the y-axis label
 ax.set_xticklabels(['Heterogeneous', 'Non-Heterogeneous'])
-ax.set_ylabel('Species Recovery Time')
+ax.set_xlabel('Environment', labelpad=20)
+ax.set_ylabel('Species Recovery Time (Iteration Number)')
 ax.set_title('Species Recovery Time: Heterogeneous vs Non-Heterogeneous')
 
 # Show the plot
